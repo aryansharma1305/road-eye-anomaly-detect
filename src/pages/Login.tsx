@@ -1,6 +1,6 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from 'sonner';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -10,9 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User, Lock, Mail, UserPlus, ArrowRight } from 'lucide-react';
-
-const ADMIN_EMAIL = 'admin@roadapp.com';
-const ADMIN_PASSWORD = 'RoadApp2025!Admin';
+import { loginUser, registerUser, ADMIN_EMAIL, ADMIN_PASSWORD } from '@/lib/api/auth';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -49,26 +47,9 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      const isAdminAttempt = 
-        loginData.email === ADMIN_EMAIL && 
-        loginData.password === ADMIN_PASSWORD;
+      const { isAdmin } = await loginUser(loginData.email, loginData.password);
       
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: loginData.email,
-        password: loginData.password,
-      });
-      
-      if (error) throw error;
-      
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('is_admin')
-        .eq('id', data.user?.id)
-        .single();
-      
-      const isSupabaseAdmin = profileData?.is_admin || isAdminAttempt;
-      
-      if (isSupabaseAdmin) {
+      if (isAdmin) {
         toast.success('Admin Login Successful');
         navigate('/admin');
       } else {
@@ -93,17 +74,7 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: registerData.email,
-        password: registerData.password,
-        options: {
-          data: {
-            full_name: registerData.name,
-          }
-        }
-      });
-      
-      if (error) throw error;
+      await registerUser(registerData.email, registerData.password, registerData.name);
       
       toast.success('Registration Successful');
       navigate('/');
