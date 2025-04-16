@@ -4,3 +4,4 @@ export * from './fileUpload';
 export * from './anomalies';
 export * from './reports';
 export * from './reportManagement';
+export * from './auth';
