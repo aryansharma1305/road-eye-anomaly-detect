@@ -9,3 +9,29 @@ const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 // import { supabase } from "@/integrations/supabase/client";
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+// Ensure admin user is created during Supabase initialization
+const ensureAdminUser = async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    // Create admin user if not exists
+    const { data, error } = await supabase.auth.signUp({
+      email: 'admin@roadapp.com',
+      password: 'RoadApp2025!Admin',
+      options: {
+        data: {
+          full_name: 'Road App Admin',
+          is_admin: true
+        }
+      }
+    });
+
+    if (error) {
+      console.error('Admin user creation failed:', error);
+    }
+  }
+};
+
+// Call the function to ensure admin user
+ensureAdminUser();

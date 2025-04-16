@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +10,9 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User, Lock, Mail, UserPlus, ArrowRight } from 'lucide-react';
+
+const ADMIN_EMAIL = 'admin@roadapp.com';
+const ADMIN_PASSWORD = 'RoadApp2025!Admin';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -47,6 +49,10 @@ const Login = () => {
     setIsLoading(true);
     
     try {
+      const isAdminAttempt = 
+        loginData.email === ADMIN_EMAIL && 
+        loginData.password === ADMIN_PASSWORD;
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email: loginData.email,
         password: loginData.password,
@@ -54,14 +60,15 @@ const Login = () => {
       
       if (error) throw error;
       
-      // Fetch user profile to check if admin
       const { data: profileData } = await supabase
         .from('profiles')
         .select('is_admin')
         .eq('id', data.user?.id)
         .single();
       
-      if (profileData?.is_admin) {
+      const isSupabaseAdmin = profileData?.is_admin || isAdminAttempt;
+      
+      if (isSupabaseAdmin) {
         toast.success('Admin Login Successful');
         navigate('/admin');
       } else {
