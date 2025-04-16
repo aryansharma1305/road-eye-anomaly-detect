@@ -166,7 +166,10 @@ const Login = () => {
                 <CardFooter className="flex justify-center border-t pt-6">
                   <p className="text-sm text-gray-500">
                     Don't have an account?{' '}
-                    <a href="#" className="text-roadapp-purple hover:underline" onClick={() => document.querySelector("[data-value='register']")?.click()}>
+                    <a href="#" className="text-roadapp-purple hover:underline" onClick={() => {
+                      const registerTab = document.querySelector("[data-value='register']") as HTMLElement;
+                      if (registerTab) registerTab.click();
+                    }}>
                       Register Now
                     </a>
                   </p>
@@ -280,7 +283,10 @@ const Login = () => {
                 <CardFooter className="flex justify-center border-t pt-6">
                   <p className="text-sm text-gray-500">
                     Already have an account?{' '}
-                    <a href="#" className="text-roadapp-purple hover:underline" onClick={() => document.querySelector("[data-value='login']")?.click()}>
+                    <a href="#" className="text-roadapp-purple hover:underline" onClick={() => {
+                      const loginTab = document.querySelector("[data-value='login']") as HTMLElement;
+                      if (loginTab) loginTab.click();
+                    }}>
                       Sign In
                     </a>
                   </p>
