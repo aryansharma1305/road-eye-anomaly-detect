@@ -1,3 +1,4 @@
+
 // This file would handle all API calls to your Flask backend
 
 interface UploadFileResponse {
@@ -168,8 +169,8 @@ export const getReportById = async (reportId: string) => {
   }
 };
 
-// Update a report's status
-export const updateReportStatus = async (
+// Update a report's status using REST API
+export const updateReportStatusREST = async (
   reportId: string, 
   status: string, 
   adminNotes?: string
@@ -229,7 +230,7 @@ export const fetchReports = async (filters?: {
   }
 };
 
-// Update report status (only for admins)
+// Update report status (only for admins) using Supabase
 export const updateReportStatus = async (
   reportId: string, 
   status: string, 
