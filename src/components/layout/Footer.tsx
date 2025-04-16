@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AlertTriangle, Mail, Phone, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -25,6 +24,7 @@ const Footer: React.FC = () => {
               <li>
                 <Link to="/" className="text-sm text-gray-600 hover:text-roadapp-purple">Home</Link>
               </li>
+
               <li>
                 <Link to="/about" className="text-sm text-gray-600 hover:text-roadapp-purple">About</Link>
               </li>
@@ -45,19 +45,19 @@ const Footer: React.FC = () => {
             <ul className="space-y-2">
               <li className="flex items-center text-sm text-gray-600">
                 <Mail className="w-4 h-4 mr-2 text-roadapp-purple" />
-                <a href="mailto:info@roadanomalydetect.com" className="hover:text-roadapp-purple">
-                  info@roadanomalydetect.com
+                <a href="mailto:aryansharmaji1305@gmail.com" className="hover:text-roadapp-purple">
+                  aryansharmaji1305@gmail.com
                 </a>
               </li>
               <li className="flex items-center text-sm text-gray-600">
                 <Phone className="w-4 h-4 mr-2 text-roadapp-purple" />
-                <a href="tel:+1234567890" className="hover:text-roadapp-purple">
-                  +1 (234) 567-890
+                <a href="tel:+918939489526" className="hover:text-roadapp-purple">
+                  +91 89394 89526
                 </a>
               </li>
               <li className="flex items-center text-sm text-gray-600">
                 <MapPin className="w-4 h-4 mr-2 text-roadapp-purple" />
-                <span>123 Road Inspection Ave, City</span>
+                <span>Chennai, India</span>
               </li>
             </ul>
           </div>
