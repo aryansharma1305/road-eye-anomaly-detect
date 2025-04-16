@@ -1,9 +1,7 @@
-
-import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import React, { useState, useEffect } from 'react';
+import { supabase } from "@/integrations/supabase/client";
+import { fetchReports, updateReportStatus } from '@/lib/api';
+import { toast } from 'sonner';
 import ReportsTable from '@/components/admin/ReportsTable';
 import ReportDetail from '@/components/admin/ReportDetail';
 import { 
@@ -24,8 +22,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const Admin = () => {
-  const [activeTab, setActiveTab] = useState<string>('overview');
+  const [reports, setReports] = useState([]);
   const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>('overview');
   
   // Mock data for the dashboard
   const dashboardData = {
@@ -40,6 +41,56 @@ const Admin = () => {
       { id: '002', location: '456 Oak Ave', date: '2025-04-15', type: 'Crack', severity: 'Medium' },
       { id: '003', location: '789 Pine Rd', date: '2025-04-14', type: 'Pothole', severity: 'Low' },
     ]
+  };
+  
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        // Redirect to login if not authenticated
+        window.location.href = '/login';
+        return;
+      }
+      
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', user.id)
+        .single();
+      
+      if (!profileData?.is_admin) {
+        toast.error('Access Denied: Admin rights required');
+        window.location.href = '/';
+        return;
+      }
+      
+      setIsAdmin(true);
+      loadReports();
+    };
+    
+    checkAdminStatus();
+  }, []);
+  
+  const loadReports = async () => {
+    try {
+      const fetchedReports = await fetchReports({ isAdmin: true });
+      setReports(fetchedReports);
+      setIsLoading(false);
+    } catch (error) {
+      toast.error('Failed to load reports');
+      setIsLoading(false);
+    }
+  };
+  
+  const handleStatusUpdate = async (reportId: string, newStatus: string) => {
+    try {
+      await updateReportStatus(reportId, newStatus);
+      loadReports(); // Refresh the reports
+      toast.success(`Report status updated to ${newStatus}`);
+    } catch (error) {
+      toast.error('Failed to update report status');
+    }
   };
   
   const handleViewReport = (reportId: string) => {
