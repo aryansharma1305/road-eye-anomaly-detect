@@ -19,7 +19,8 @@ import {
   Filter, 
   Search,
   Image,
-  Video
+  Video,
+  User
 } from 'lucide-react';
 import { 
   DropdownMenu,

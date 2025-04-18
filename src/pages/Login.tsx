@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -47,6 +46,17 @@ const Login = () => {
     setIsLoading(true);
     
     try {
+      console.log("Attempting login with:", loginData.email);
+      
+      // Hardcoded admin login check
+      if (loginData.email === ADMIN_EMAIL && loginData.password === ADMIN_PASSWORD) {
+        console.log("Admin credentials matched");
+        toast.success('Admin Login Successful');
+        navigate('/admin');
+        return;
+      }
+      
+      // Otherwise, try regular login
       const { isAdmin } = await loginUser(loginData.email, loginData.password);
       
       if (isAdmin) {
@@ -57,7 +67,8 @@ const Login = () => {
         navigate('/');
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Login failed');
+      console.error("Login error:", error);
+      toast.error(error instanceof Error ? error.message : 'Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false);
     }

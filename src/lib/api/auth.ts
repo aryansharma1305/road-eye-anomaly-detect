@@ -10,23 +10,23 @@ export const ADMIN_PASSWORD = 'RoadApp2025!Admin';
 export const loginUser = async (email: string, password: string) => {
   try {
     // Check if admin login
-    const isAdminLogin = email === ADMIN_EMAIL && password === ADMIN_PASSWORD;
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+      console.log("Admin login detected");
+      return {
+        user: { email: ADMIN_EMAIL, is_admin: true },
+        isAdmin: true,
+        session: null
+      };
+    }
     
-    // Sign in with Supabase
+    // If not admin, try Supabase auth
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     
     if (error) {
-      // For admin credentials, don't throw error even if Supabase auth fails
-      if (isAdminLogin) {
-        return {
-          user: { email: ADMIN_EMAIL, is_admin: true },
-          isAdmin: true,
-          session: null
-        };
-      }
+      console.error('Supabase login error:', error);
       throw error;
     }
     
@@ -37,7 +37,7 @@ export const loginUser = async (email: string, password: string) => {
       .eq('id', data.user?.id)
       .single();
     
-    const isAdmin = profileData?.is_admin || isAdminLogin;
+    const isAdmin = profileData?.is_admin || false;
     
     return {
       user: data.user,

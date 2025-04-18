@@ -7,11 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { Mail, Phone, MapPin, Send, CheckCircle, MessageSquare, Clock, Calendar } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Contact = () => {
-  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -34,10 +33,8 @@ const Contact = () => {
     // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
-      toast({
-        title: "Message Sent",
+      toast.success("Message Sent Successfully", {
         description: "We've received your message and will respond soon.",
-        action: <CheckCircle className="h-4 w-4 text-green-600" />
       });
       
       // Reset form
@@ -56,21 +53,22 @@ const Contact = () => {
       
       <main className="flex-1">
         <div className="container py-8">
-          <h1 className="text-3xl font-bold mb-2 text-gray-900 flex items-center gap-2">
-            <Mail className="h-7 w-7 text-roadapp-purple" />
-            Contact Us
-          </h1>
-          <p className="text-gray-600 mb-6 max-w-3xl">
-            Have questions about our road anomaly detection system? Get in touch with our team.
-          </p>
+          <div className="max-w-3xl mx-auto mb-8">
+            <h1 className="text-3xl font-bold mb-2 text-center text-gray-900">
+              Get in Touch
+            </h1>
+            <p className="text-gray-600 text-center">
+              We're here to help with your road anomaly detection needs
+            </p>
+          </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <div className="lg:col-span-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Send us a Message</CardTitle>
+              <Card className="shadow-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-xl text-roadapp-purple">Send us a Message</CardTitle>
                   <CardDescription>
-                    Fill out the form below and we'll get back to you as soon as possible.
+                    Fill out the form below and our team will get back to you as soon as possible.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -78,42 +76,54 @@ const Contact = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                       <div className="space-y-2">
                         <Label htmlFor="name">Your Name</Label>
-                        <Input 
-                          id="name" 
-                          name="name" 
-                          placeholder="John Doe"
-                          value={formData.name}
-                          onChange={handleChange}
-                          required
-                        />
+                        <div className="relative">
+                          <Input 
+                            id="name" 
+                            name="name" 
+                            placeholder="John Doe"
+                            value={formData.name}
+                            onChange={handleChange}
+                            className="pl-10"
+                            required
+                          />
+                          <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        </div>
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="email">Email Address</Label>
-                        <Input 
-                          id="email" 
-                          name="email"
-                          type="email" 
-                          placeholder="johndoe@example.com" 
-                          value={formData.email}
-                          onChange={handleChange}
-                          required
-                        />
+                        <div className="relative">
+                          <Input 
+                            id="email" 
+                            name="email"
+                            type="email" 
+                            placeholder="your@email.com" 
+                            value={formData.email}
+                            onChange={handleChange}
+                            className="pl-10"
+                            required
+                          />
+                          <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        </div>
                       </div>
                     </div>
                     
                     <div className="space-y-2 mb-4">
                       <Label htmlFor="subject">Subject</Label>
-                      <Input 
-                        id="subject" 
-                        name="subject"
-                        placeholder="How can we help you?" 
-                        value={formData.subject}
-                        onChange={handleChange}
-                        required
-                      />
+                      <div className="relative">
+                        <Input 
+                          id="subject" 
+                          name="subject"
+                          placeholder="How can we help you?" 
+                          value={formData.subject}
+                          onChange={handleChange}
+                          className="pl-10"
+                          required
+                        />
+                        <MessageSquare className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      </div>
                     </div>
                     
-                    <div className="space-y-2 mb-4">
+                    <div className="space-y-2 mb-6">
                       <Label htmlFor="message">Your Message</Label>
                       <Textarea 
                         id="message" 
@@ -122,6 +132,7 @@ const Contact = () => {
                         rows={6}
                         value={formData.message}
                         onChange={handleChange}
+                        className="resize-none"
                         required
                       />
                     </div>
@@ -153,70 +164,93 @@ const Contact = () => {
               </Card>
             </div>
             
-            <div>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Contact Information</CardTitle>
+            <div className="space-y-6">
+              <Card className="shadow-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-xl text-roadapp-purple">Contact Information</CardTitle>
                   <CardDescription>
                     Ways to reach our team directly
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-5">
                   <div className="flex items-start">
-                    <Mail className="h-5 w-5 mr-3 text-roadapp-purple" />
+                    <div className="bg-roadapp-purple/10 p-2 rounded-full mr-3">
+                      <Mail className="h-5 w-5 text-roadapp-purple" />
+                    </div>
                     <div>
                       <p className="font-medium">Email</p>
-                      <a href="mailto:info@roadanomalydetect.com" className="text-roadapp-purple hover:underline">
-                        info@roadanomalydetect.com
+                      <a href="mailto:support@roadapp.com" className="text-roadapp-purple hover:underline">
+                        support@roadapp.com
                       </a>
                     </div>
                   </div>
                   
                   <div className="flex items-start">
-                    <Phone className="h-5 w-5 mr-3 text-roadapp-purple" />
+                    <div className="bg-roadapp-purple/10 p-2 rounded-full mr-3">
+                      <Phone className="h-5 w-5 text-roadapp-purple" />
+                    </div>
                     <div>
                       <p className="font-medium">Phone</p>
-                      <a href="tel:+1234567890" className="text-roadapp-purple hover:underline">
-                        +1 (234) 567-890
+                      <a href="tel:+1-800-ROAD-APP" className="text-roadapp-purple hover:underline">
+                        +1-800-ROAD-APP
                       </a>
+                      <p className="text-sm text-gray-500 mt-1">Monday-Friday, 9AM-5PM EST</p>
                     </div>
                   </div>
                   
                   <div className="flex items-start">
-                    <MapPin className="h-5 w-5 mr-3 text-roadapp-purple" />
+                    <div className="bg-roadapp-purple/10 p-2 rounded-full mr-3">
+                      <MapPin className="h-5 w-5 text-roadapp-purple" />
+                    </div>
                     <div>
-                      <p className="font-medium">Office</p>
+                      <p className="font-medium">Main Office</p>
                       <p className="text-gray-600">
-                        123 Road Inspection Avenue<br />
-                        Suite 456<br />
-                        City, State 78901
+                        123 Innovation Drive<br />
+                        Suite 500<br />
+                        Tech City, CA 90210
                       </p>
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter className="bg-gray-50 border-t">
-                  <p className="text-sm text-gray-500">
-                    Office Hours: Monday to Friday, 9 AM - 5 PM
-                  </p>
-                </CardFooter>
               </Card>
               
-              <Card className="mt-6">
-                <CardHeader>
-                  <CardTitle>Report a Road Issue</CardTitle>
-                  <CardDescription>
-                    Need to report a road anomaly?
-                  </CardDescription>
+              <Card className="shadow-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-xl text-roadapp-purple">Business Hours</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 mb-4">
-                    For faster processing of road issues, please use our main detection 
-                    tool instead of the contact form.
-                  </p>
+                <CardContent className="space-y-4">
+                  <div className="flex items-start">
+                    <div className="bg-roadapp-purple/10 p-2 rounded-full mr-3">
+                      <Clock className="h-5 w-5 text-roadapp-purple" />
+                    </div>
+                    <div>
+                      <p className="font-medium">Hours of Operation</p>
+                      <p className="text-gray-600">
+                        Monday - Friday: 9AM - 5PM<br />
+                        Saturday: 10AM - 2PM<br />
+                        Sunday: Closed
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start">
+                    <div className="bg-roadapp-purple/10 p-2 rounded-full mr-3">
+                      <Calendar className="h-5 w-5 text-roadapp-purple" />
+                    </div>
+                    <div>
+                      <p className="font-medium">Support Hours</p>
+                      <p className="text-gray-600">
+                        24/7 for emergency road hazards<br />
+                        Regular support during business hours
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter className="bg-gray-50 border-t pt-4">
                   <Button variant="outline" className="w-full" onClick={() => window.location.href = '/'}>
                     Go to Anomaly Detection Tool
                   </Button>
-                </CardContent>
+                </CardFooter>
               </Card>
             </div>
           </div>
