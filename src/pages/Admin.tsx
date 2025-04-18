@@ -1,10 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { fetchReports, updateReportStatus } from '@/lib/api';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 import ReportsTable from '@/components/admin/ReportsTable';
 import ReportDetail from '@/components/admin/ReportDetail';
+import { ADMIN_EMAIL } from '@/lib/api/auth';
 import { 
   LayoutDashboard, 
   ClipboardList, 
@@ -24,12 +25,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import UsersTable from '@/components/admin/UsersTable';
 
 const Admin = () => {
+  const navigate = useNavigate();
   const [reports, setReports] = useState([]);
   const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState<string>('overview');
   
   // Mock data for the dashboard
@@ -49,32 +51,47 @@ const Admin = () => {
   
   useEffect(() => {
     const checkAdminStatus = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        // Redirect to login if not authenticated
-        window.location.href = '/login';
-        return;
+      try {
+        // Check if user is logged in
+        const { data: { user } } = await supabase.auth.getUser();
+        const storedIsAdmin = localStorage.getItem('isAdmin');
+        
+        // Check for hardcoded admin or database admin
+        if (user?.email === ADMIN_EMAIL || storedIsAdmin === 'true') {
+          loadReports();
+          return;
+        }
+        
+        if (!user) {
+          toast.error('Please login to access admin dashboard');
+          navigate('/login');
+          return;
+        }
+        
+        // Check if user has admin profile
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('is_admin')
+          .eq('id', user.id)
+          .single();
+        
+        if (profileError || !profileData?.is_admin) {
+          toast.error('Access Denied: Admin rights required');
+          navigate('/');
+          return;
+        }
+
+        // If we get here, user is an admin
+        loadReports();
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+        toast.error('Error verifying admin status');
+        navigate('/');
       }
-      
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('is_admin')
-        .eq('id', user.id)
-        .single();
-      
-      if (!profileData?.is_admin) {
-        toast.error('Access Denied: Admin rights required');
-        window.location.href = '/';
-        return;
-      }
-      
-      setIsAdmin(true);
-      loadReports();
     };
     
     checkAdminStatus();
-  }, []);
+  }, [navigate]);
   
   const loadReports = async () => {
     try {
@@ -350,15 +367,7 @@ const Admin = () => {
           {activeTab === 'users' && (
             <div className="space-y-6">
               <h1 className="text-2xl font-bold text-gray-900">Users</h1>
-              <Card>
-                <CardHeader>
-                  <CardTitle>User Management</CardTitle>
-                  <CardDescription>Manage user accounts and permissions</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-center py-12 text-gray-500">User management features will be implemented in a future update.</p>
-                </CardContent>
-              </Card>
+              <UsersTable />
             </div>
           )}
           

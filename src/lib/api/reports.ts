@@ -1,5 +1,4 @@
-
-// Report submission and retrieval using REST API
+import { supabase } from "@/integrations/supabase/client";
 
 interface ReportSubmissionResponse {
   success: boolean;
@@ -7,10 +6,7 @@ interface ReportSubmissionResponse {
   error?: string;
 }
 
-// Base URL for the Flask backend
-const API_BASE_URL = 'http://localhost:5000/api';
-
-// Submit a report to the admin
+// Submit a report to Supabase
 export const submitReport = async (
   fileId: string, 
   location: string,
@@ -21,27 +17,38 @@ export const submitReport = async (
   }
 ): Promise<ReportSubmissionResponse> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/reports`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        fileId,
-        location,
-        detections,
-      }),
-    });
+    // Get the current user
+    const { data: { user } } = await supabase.auth.getUser();
     
-    const data = await response.json();
+    if (!user) {
+      throw new Error('User must be authenticated to submit a report');
+    }
     
-    if (!response.ok) {
-      throw new Error(data.error || 'Failed to submit report');
+    // Insert the report into Supabase
+    const { data, error } = await supabase
+      .from('road_reports')
+      .insert([
+        {
+          file_id: fileId,
+          location,
+          user_id: user.id,
+          potholes: detections.potholes,
+          cracks: detections.cracks,
+          severity_score: detections.severityScore,
+          status: 'pending',
+          created_at: new Date().toISOString()
+        }
+      ])
+      .select()
+      .single();
+    
+    if (error) {
+      throw error;
     }
     
     return {
       success: true,
-      reportId: data.reportId,
+      reportId: data.id,
     };
   } catch (error) {
     console.error('Error submitting report:', error);
@@ -55,11 +62,19 @@ export const submitReport = async (
 // Get all reports (for admin dashboard)
 export const getReports = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/reports`);
-    const data = await response.json();
+    const { data, error } = await supabase
+      .from('road_reports')
+      .select(`
+        *,
+        profiles:user_id (
+          full_name,
+          email
+        )
+      `)
+      .order('created_at', { ascending: false });
     
-    if (!response.ok) {
-      throw new Error(data.error || 'Failed to fetch reports');
+    if (error) {
+      throw error;
     }
     
     return data;
@@ -72,11 +87,20 @@ export const getReports = async () => {
 // Get a single report by ID
 export const getReportById = async (reportId: string) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/reports/${reportId}`);
-    const data = await response.json();
+    const { data, error } = await supabase
+      .from('road_reports')
+      .select(`
+        *,
+        profiles:user_id (
+          full_name,
+          email
+        )
+      `)
+      .eq('id', reportId)
+      .single();
     
-    if (!response.ok) {
-      throw new Error(data.error || 'Failed to fetch report');
+    if (error) {
+      throw error;
     }
     
     return data;
@@ -86,28 +110,25 @@ export const getReportById = async (reportId: string) => {
   }
 };
 
-// Update a report's status using REST API
-export const updateReportStatusREST = async (
+// Update a report's status
+export const updateReportStatus = async (
   reportId: string, 
   status: string, 
   adminNotes?: string
 ) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/reports/${reportId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    const { data, error } = await supabase
+      .from('road_reports')
+      .update({ 
         status,
-        adminNotes,
-      }),
-    });
+        admin_notes: adminNotes,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', reportId)
+      .select();
     
-    const data = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(data.error || 'Failed to update report status');
+    if (error) {
+      throw error;
     }
     
     return data;

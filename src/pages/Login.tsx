@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -47,14 +46,21 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      const { isAdmin } = await loginUser(loginData.email, loginData.password);
+      const { isAdmin, user, session } = await loginUser(loginData.email, loginData.password);
+      
+      // Store the auth state in localStorage
+      localStorage.setItem('isAdmin', JSON.stringify(isAdmin));
+      localStorage.setItem('user', JSON.stringify(user));
+      if (session) {
+        localStorage.setItem('session', JSON.stringify(session));
+      }
       
       if (isAdmin) {
         toast.success('Admin Login Successful');
-        navigate('/admin');
+        navigate('/admin', { replace: true }); // Use replace to prevent going back to login
       } else {
         toast.success('User Login Successful');
-        navigate('/');
+        navigate('/', { replace: true });
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Login failed');

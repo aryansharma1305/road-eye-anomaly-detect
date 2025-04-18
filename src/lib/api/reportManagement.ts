@@ -1,4 +1,3 @@
-
 // Report management functions using Supabase
 
 import { supabase } from "@/integrations/supabase/client";
@@ -27,31 +26,6 @@ export const fetchReports = async (filters?: {
     return data;
   } catch (error) {
     console.error('Error fetching reports:', error);
-    throw error;
-  }
-};
-
-// Update report status (only for admins) using Supabase
-export const updateReportStatus = async (
-  reportId: string, 
-  status: string, 
-  additionalNotes?: string
-) => {
-  try {
-    const { data, error } = await supabase
-      .from('road_reports')
-      .update({ 
-        status, 
-        updated_at: new Date().toISOString() 
-      })
-      .eq('id', reportId)
-      .select();
-    
-    if (error) throw error;
-    
-    return data;
-  } catch (error) {
-    console.error('Error updating report:', error);
     throw error;
   }
 };
