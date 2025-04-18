@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from "@/integrations/supabase/client";
-import { fetchReports, updateReportStatus } from '@/lib/api';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import ReportsTable from '@/components/admin/ReportsTable';
@@ -31,7 +29,11 @@ const Admin = () => {
   const navigate = useNavigate();
   const [reports, setReports] = useState([]);
   const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
+<<<<<<< HEAD
   const [isLoading, setIsLoading] = useState(true);
+=======
+  const [isLoading, setIsLoading] = useState(false);
+>>>>>>> b6582226b003c994a710d10224418576efc0e784
   const [activeTab, setActiveTab] = useState<string>('overview');
   
   // Mock data for the dashboard
@@ -49,6 +51,7 @@ const Admin = () => {
     ]
   };
   
+<<<<<<< HEAD
   useEffect(() => {
     const checkAdminStatus = async () => {
       try {
@@ -114,6 +117,8 @@ const Admin = () => {
     }
   };
   
+=======
+>>>>>>> b6582226b003c994a710d10224418576efc0e784
   const handleViewReport = (reportId: string) => {
     setSelectedReportId(reportId);
     setActiveTab('reportDetail');

@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User, Lock, Mail, UserPlus, ArrowRight } from 'lucide-react';
-import { loginUser, registerUser, ADMIN_EMAIL, ADMIN_PASSWORD } from '@/lib/api/auth';
+import { ADMIN_EMAIL, ADMIN_PASSWORD, loginUser, registerUser } from '@/lib/api/auth';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -46,6 +46,7 @@ const Login = () => {
     setIsLoading(true);
     
     try {
+<<<<<<< HEAD
       const { isAdmin, user, session } = await loginUser(loginData.email, loginData.password);
       
       // Store the auth state in localStorage
@@ -54,6 +55,21 @@ const Login = () => {
       if (session) {
         localStorage.setItem('session', JSON.stringify(session));
       }
+=======
+      console.log("Attempting login with:", loginData.email);
+      
+      // Direct admin login check first for faster response
+      if (loginData.email === ADMIN_EMAIL && loginData.password === ADMIN_PASSWORD) {
+        console.log("Admin login detected - redirecting to admin dashboard");
+        toast.success('Admin Login Successful');
+        navigate('/admin');
+        setIsLoading(false);
+        return;
+      }
+      
+      // Otherwise, try regular login through the API
+      const { isAdmin } = await loginUser(loginData.email, loginData.password);
+>>>>>>> b6582226b003c994a710d10224418576efc0e784
       
       if (isAdmin) {
         toast.success('Admin Login Successful');
@@ -63,7 +79,8 @@ const Login = () => {
         navigate('/', { replace: true });
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Login failed');
+      console.error("Login error:", error);
+      toast.error(error instanceof Error ? error.message : 'Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false);
     }
