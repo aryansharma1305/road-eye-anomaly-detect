@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User, Lock, Mail, UserPlus, ArrowRight } from 'lucide-react';
-import { loginUser, registerUser, ADMIN_EMAIL, ADMIN_PASSWORD } from '@/lib/api/auth';
+import { ADMIN_EMAIL, ADMIN_PASSWORD, loginUser, registerUser } from '@/lib/api/auth';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -48,15 +48,16 @@ const Login = () => {
     try {
       console.log("Attempting login with:", loginData.email);
       
-      // Hardcoded admin login check
+      // Direct admin login check first for faster response
       if (loginData.email === ADMIN_EMAIL && loginData.password === ADMIN_PASSWORD) {
-        console.log("Admin credentials matched");
+        console.log("Admin login detected - redirecting to admin dashboard");
         toast.success('Admin Login Successful');
         navigate('/admin');
+        setIsLoading(false);
         return;
       }
       
-      // Otherwise, try regular login
+      // Otherwise, try regular login through the API
       const { isAdmin } = await loginUser(loginData.email, loginData.password);
       
       if (isAdmin) {

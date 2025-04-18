@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Mail, Phone, MapPin, Send, CheckCircle, MessageSquare, Clock, Calendar } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle, MessageSquare, Clock, Calendar, User } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Contact = () => {
@@ -179,8 +179,8 @@ const Contact = () => {
                     </div>
                     <div>
                       <p className="font-medium">Email</p>
-                      <a href="mailto:support@roadapp.com" className="text-roadapp-purple hover:underline">
-                        support@roadapp.com
+                      <a href="mailto:aryansharmaji1305@gmail.com" className="text-roadapp-purple hover:underline">
+                        aryansharmaji1305@gmail.com
                       </a>
                     </div>
                   </div>
@@ -191,10 +191,10 @@ const Contact = () => {
                     </div>
                     <div>
                       <p className="font-medium">Phone</p>
-                      <a href="tel:+1-800-ROAD-APP" className="text-roadapp-purple hover:underline">
-                        +1-800-ROAD-APP
+                      <a href="tel:+918939489526" className="text-roadapp-purple hover:underline">
+                        +91 89394 89526
                       </a>
-                      <p className="text-sm text-gray-500 mt-1">Monday-Friday, 9AM-5PM EST</p>
+                      <p className="text-sm text-gray-500 mt-1">Monday-Friday, 9AM-5PM IST</p>
                     </div>
                   </div>
                   
@@ -203,11 +203,9 @@ const Contact = () => {
                       <MapPin className="h-5 w-5 text-roadapp-purple" />
                     </div>
                     <div>
-                      <p className="font-medium">Main Office</p>
+                      <p className="font-medium">Location</p>
                       <p className="text-gray-600">
-                        123 Innovation Drive<br />
-                        Suite 500<br />
-                        Tech City, CA 90210
+                        Chennai, India
                       </p>
                     </div>
                   </div>

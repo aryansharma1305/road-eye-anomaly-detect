@@ -9,9 +9,9 @@ export const ADMIN_PASSWORD = 'RoadApp2025!Admin';
 // Login function that handles both Supabase auth and admin login
 export const loginUser = async (email: string, password: string) => {
   try {
-    // Check if admin login
+    // Check if admin login credentials match
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      console.log("Admin login detected");
+      console.log("Admin login successful");
       return {
         user: { email: ADMIN_EMAIL, is_admin: true },
         isAdmin: true,
